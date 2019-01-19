@@ -1,4 +1,4 @@
-const base_router = require('./src/base_router');
+const base_router = require('./src/user');
 
 function userCreation(knex, params) {
     return new base_router(knex, params)

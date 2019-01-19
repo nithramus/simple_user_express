@@ -54,7 +54,7 @@ class MysqlModel {
 
     async get(params) {
         try {
-            const users = await this.knex('users').where(params);
+            const users = await this.knex('users').where(params).select(property);
             return users
         }
         catch(err) {

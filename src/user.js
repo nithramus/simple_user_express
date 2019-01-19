@@ -54,7 +54,7 @@ class User {
             this.router.post('/signup', user.signup);
         }
         this.router.post('/login', user.login);
-        this.router.post('/me/picture', user.picture)
+        this.router.post('/me/picture', user.setProfilePicture)
         this.router.delete('/logout', user.logout);
         this.router.put('/me', user.update);
     }
