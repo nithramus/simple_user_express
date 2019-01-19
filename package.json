@@ -1,0 +1,31 @@
+{
+  "name": "simple_user_express",
+  "version": "1.0.0",
+  "description": "A simple package for a simple user management",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nithramus/simple_user_express.git"
+  },
+  "keywords": [
+    "simple",
+    "user",
+    "express",
+    "management",
+    "easy"
+  ],
+  "author": "nithramir",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nithramus/simple_user_express/issues"
+  },
+  "homepage": "https://github.com/nithramus/simple_user_express#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "uuid": "^3.3.2",
+    "validate": "^4.5.1"
+  }
+}
