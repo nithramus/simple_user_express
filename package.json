@@ -1,6 +1,6 @@
 {
   "name": "simple_user_express",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple package for a simple user management",
   "main": "index.js",
   "scripts": {
