@@ -8,11 +8,13 @@ class MysqlModel {
     }
     async add(params) {
         try {
+            console.log({params})
             const id = await this.knex('users').insert({
                 username: params.username,
                 email: params.email,
-                password: this.knex.raw(`HASBYTE(SHA2_512, ${params.password})`)
+                password: this.knex.raw(`MD5('${params.password}')`)
             }).returning('id');
+            return id;
         }
         catch(err) {
             console.log(err);
@@ -26,7 +28,7 @@ class MysqlModel {
             const id = await this.knex('users').update({
                 username: params.username,
                 email: params.email,
-                password: this.knex.raw(`HASBYTE(SHA2_512, ${params.password})`)
+                password: this.knex.raw(`MD5('${params.password}')`)
             }).where({
                 id
             }).returning('id');

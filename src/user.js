@@ -43,37 +43,40 @@ const userUpdateSChema = new Schema({
 
 class User {
     constructor(knex, fileUtils, params) {
+        this.knex = knex;
         this.allow_signup = params.allow_signup;
         this.bdd = new mysql_model(knex);
         this.router = express.Router();
         this.fileUtils = fileUtils;
+        this.generateRouter();
     }
 
     generateRouter() {
         if (this.allow_signup) {
-            this.router.post('/signup', user.signup);
         }
-        this.router.post('/login', user.login);
-        this.router.post('/me/picture', user.setProfilePicture)
-        this.router.delete('/logout', user.logout);
-        this.router.put('/me', user.update);
+        this.router.post('/signup', (req, res) => this.signup(req, res));
+        this.router.post('/login', (req, res) => this.login(req, res));
+        this.router.post('/me/picture', (req, res) => this.setProfilePicture(req, res))
+        this.router.post('/logout', (req, res) => this.logout(req, res));
+        this.router.put('/me', (req, res) => this.update(req, res));
     }
 
     async login(req, res) {
-        if (req.session.connected = true) {
+        if (req.session.connected === true) {
             throw new Error('Already connected')
         }
         const errors = userSchema.validate(req.body);
         if (errors.length > 1) {
-            res.status(400).send({ errors: errors })
+            await res.status(400).send({ errors: errors.map(error => error.message) })
+            return;
         }
         const user = await this.bdd.get({
             // username: req.body.username,
-            password: this.knex.raw(`HASBYTE(SHA2_512, ${req.body.password})`),
+            password: this.knex.raw(`MD5('${req.body.password}')`),
             email: req.body.email
         });
         if (user.length !== 1) {
-            throw new Error('Login error');
+            throw new Error('Wrong login or password');
         }
         req.session.user = user[0];
         req.session.connected = true;
@@ -82,13 +85,22 @@ class User {
     }
 
     async signup(req, res) {
-        
+        const errors = userSchema.validate(req.body);
+        if (errors.length > 1) {
+            await res.status(400).send({ errors: errors.map(error => error.message) })
+            return;
+        }
+        console.log(req.body);
+        const userId = await this.bdd.add(req.body);
+        const user = await this.bdd.get({ id: userId });
+        await this.renderResponse({ user: user[0] }, res);
     }
 
     async update(req, res) {
         const errors = userUpdateSChema.validate(req.body);
         if (errors.length > 1) {
-            await res.status(400).send({ errors: errors })
+            await res.status(400).send({ errors: errors.map(error => error.message) })
+            return;
         }
         const newUser = await this.bdd.update({
             username: req.body.username,
@@ -107,7 +119,7 @@ class User {
         await this.renderResponse({ user: newUser}, res);
     }
 
-    async delete(req, res) {
+    async logout(req, res) {
         delete req.session.user;
         delete req.session.connected;
         await this.renderResponse({ message: "ok" }, res)
